@@ -1,0 +1,132 @@
+/* General Layout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Chat Container */
+.chat-container {
+    width: 90%;
+    max-width: 800px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+}
+
+/* Chat Header */
+.chat-header {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Chat Log */
+#chat-log {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    background-color: #fafafa;
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Each Chat Message */
+.chat-message {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Sender Messages */
+.chat-message.sender {
+    background-color: #e1ffe1;
+    align-self: flex-end;
+}
+
+/* Receiver Messages */
+.chat-message.receiver {
+    background-color: #f1f1f1;
+    align-self: flex-start;
+}
+
+/* Timestamp */
+.chat-message .timestamp {
+    font-size: 12px;
+    color: #777;
+    margin-left: 10px;
+}
+
+/* Chat Footer */
+.chat-footer {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Message Input */
+#chat-message-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Send Button */
+#chat-message-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#chat-message-submit:hover {
+    background-color: #45a049;
+}
+
+/* Typing Indicator */
+#typing-indicator {
+    font-size: 14px;
+    font-style: italic;
+    color: gray;
+    margin-top: 5px;
+}
+
+/* Online Users List */
+.online-users {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.online-user {
+    margin: 5px 0;
+    font-size: 14px;
+}

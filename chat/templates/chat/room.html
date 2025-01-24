@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat Room</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/styles.css' %}">
+
+
+</head>
+
+<body>
+    <h2>Room: {{ room_name }}</h2>
+    <div id="typing-indicator"></div>
+    <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            Chat Room: {{ room_name }}
+        </div>
+
+        <!-- Online Users List -->
+        <div class="online-users">
+            <h4>Online Users</h4>
+            {% for user in users %}
+            <div class="online-user">
+                {{ user.username }}
+                {% if user.is_online %}
+                <span style="color: green;">(Online)</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Chat Log -->
+        <div id="chat-log">
+            {% for message in messages %}
+            <div class="chat-message {% if message.sender == user %}sender{% else %}receiver{% endif %}">
+                <div>
+                    <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+                </div>
+                <div class="timestamp">{{ message.timestamp|date:"H:i:s" }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator"></div>
+
+        <!-- Chat Footer -->
+        <div class="chat-footer">
+            <textarea id="chat-message-input" rows="2" placeholder="Type your message here..."></textarea>
+            <button id="chat-message-submit">Send</button>
+        </div>
+    </div>
+
+
+
+    <!-- Chat Log -->
+    <textarea id="chat-log" cols="100" rows="20" readonly>
+    {% for message in messages %}
+    {{ message.user.username }}: {{ message.content }}
+    {% endfor %}
+    </textarea>
+    <textarea id="chat-log" cols="100" rows="20" readonly>
+        {% for message in messages %}
+        [{{ message.timestamp|date:"H:i:s" }}] {{ message.sender.username }}: {{ message.content }}
+        {% endfor %}
+        </textarea><br>
+
+    <!-- Message Input -->
+    <input id="chat-message-input" type="text" size="100">
+    <button id="chat-message-submit">Send</button>
+
+    <!-- WebSocket Script -->
+    <script>
+        const roomName = "{{ room_name }}";
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+        );
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const chatLog = document.querySelector('#chat-log');
+            chatLog.value += (data.message + '\n');
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function (e) {
+            if (e.keyCode === 13) {  // Enter key
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function (e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+        document.querySelector('#chat-message-input').oninput = function () {
+            chatSocket.send(JSON.stringify({
+                'typing': true
+            }));
+        };
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+
+            if (data.typing) {
+                const typingIndicator = document.querySelector('#typing-indicator');
+                typingIndicator.textContent = `${data.user} is typing...`;
+                setTimeout(() => typingIndicator.textContent = '', 1000);
+            } else if (data.message) {
+                const chatLog = document.querySelector('#chat-log');
+                chatLog.value += (data.message + '\n');
+            }
+        };
+
+    </script>
+</body>
+
+</html>
